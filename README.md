@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# search-app
+
 =======
 # Getting Started with Create React App
 
