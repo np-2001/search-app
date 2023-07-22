@@ -7,30 +7,35 @@ import { useState, useEffect } from "react";
 function Search() {
   return (
     <div className='searchpage'> 
-    <Navbar />
-    <Searchbar/>
+        <Navbar />
+        <Searchbar/>
     
     </div>
     
-  )
+  );
 }
 
 function Searchbar() {
     const [searchData,setSearchData] = useState([]);
     const [Search, SetSearch] = useState("");
-    const [Entered, SetEntered] = useState("")
+    const [Entered, SetEntered] = useState("");
+    const [Cleared, SetCleared] = useState(false);
     
     useEffect(() => {
         // Load search data from localStorage when the component mounts
-        const storedData = localStorage.getItem('searchData');
-        if (storedData) {
+        const storedData = window.localStorage.getItem('searchData');
+        if (storedData != null) {
           setSearchData(JSON.parse(storedData));
         }
       }, []);
     
       useEffect(() => {
         // Save search data to localStorage whenever it changes
-        localStorage.setItem('searchData', JSON.stringify(searchData));
+        if (searchData.length > 0 || Cleared ) {
+            window.localStorage.setItem('searchData', JSON.stringify(searchData));
+        }
+        
+        
       }, [searchData]);
 
     const handleChange = (event) => {
@@ -39,7 +44,7 @@ function Searchbar() {
 
     const Enter = (event) => {
         if (event.key === 'Enter') {
-          // 👇 Get input value
+          //Get input value
             SetEntered(Search);
             setSearchData((prevsearchData) => [...prevsearchData, Search]);
             SetSearch(''); // Clear the search bar after appending
@@ -48,6 +53,7 @@ function Searchbar() {
       };
     const handleClear = () => {
         setSearchData([]); // Clear the searchData array
+        SetCleared(true);
     };
     
     return (
