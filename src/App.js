@@ -76,47 +76,4 @@ function Searches({ searchRequested, setSearchRequested }) {
   );
 }
 
-// function Searches({ searchRequested, setSearchRequested }) {
-  
-//   const [Searching,setSearching] = useState("");
-
-//   const SearchingChange = (event) => {
-//     setSearching(event.target.value);
-//   };
-
-//   const EnterSearch = (event) => {
-    
-//     if (event.key === 'Enter') {
-//       //Get input value
-//       setSearchRequested(Searching);
-//     }
-//   };
-//   useEffect(() => {
-//     // Save search data to localStorage whenever it changes
-//     if (searchRequested.length > 0) {
-//         window.localStorage.setItem('searchRequested', JSON.stringify(searchRequested));
-//     }
-//   }, [searchRequested]);
-//   return (
-//     <div>
-      
-//       <form>
-//       <label for='search_request'></label>
-//       <input 
-//         type="text" 
-//         id='search_request' 
-//         onChange={SearchingChange}
-//         onKeyDown={EnterSearch}
-//       />
-//     </form> 
-//     <h1> {searchRequested}</h1>
-//     </div>
-    
-    
-//   );
-// }
-
-
-
-
 export default App;
