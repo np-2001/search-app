@@ -4,6 +4,8 @@ import Navbar from './Navbar'
 
 import { useState, useEffect } from "react";
 
+import './Search.css';
+
 function Search() {
   return (
     <div className='searchpage'> 
@@ -67,7 +69,11 @@ function Searchbar() {
                 onKeyDown={Enter}
             />
             <button onClick={handleClear}>Clear</button> {/* Updated the button */}
-            <h3> {searchData} </h3>
+            <ul>
+                {searchData.map((item, index) => (
+                    <h1 key={index}>{item}</h1>
+                ))}
+            </ul>
         </div>
     );
 }
