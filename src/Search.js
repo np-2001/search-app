@@ -10,10 +10,8 @@ function Search() {
   return (
     <div className='searchpage'> 
         <Navbar />
-        <Searchbar/>
-    
+        <Searchbar/> 
     </div>
-    
   );
 }
 
@@ -77,4 +75,5 @@ function Searchbar() {
         </div>
     );
 }
+
 export default Search
