@@ -68,9 +68,9 @@ function Searchbar() {
             />
             <button onClick={handleClear}>Clear</button> {/* Updated the button */}
             <ul>
-                {searchData.map((item, index) => (
-                    <h1 key={index}>{item}</h1>
-                ))}
+              {Array.isArray(searchData) && searchData.map((item, index) => (
+                <h1 key={index}>{item}</h1>
+              ))}
             </ul>
         </div>
     );
