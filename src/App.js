@@ -45,16 +45,17 @@ function Searches() {
   }, [searchRequested]);
 
   const fetchSearchResults = async () => {
-    const websiteList = ["reddit.com", "youtube.com"];
-    const websiteQuery = websiteList.map((website) => `site:${website}`).join("|");
+    
     const apiKey = "cbf04eda8f0340f0b0f28fd09e433f3a";
     const searchEndpoint = "https://api.bing.microsoft.com/v7.0/search";
     
     try {
       const storedWebsitesData = JSON.parse(window.localStorage.getItem('searchData'));
       const sitesToSearch = Array.isArray(storedWebsitesData) ? storedWebsitesData : [];
-      const query = `${searchRequested} ${sitesToSearch.map((website) => `site:${website}`).join(" ")}`;
-
+      
+      const websiteQuery = sitesToSearch.map((website) => `site:${website}`).join(" OR ");
+      const query = `${searchRequested} ${websiteQuery}`;
+  
       const response = await fetch(
         `${searchEndpoint}?q=${encodeURIComponent(query)}`,
         {
