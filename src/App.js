@@ -38,7 +38,7 @@ function Searches() {
   useEffect(() => {
     // Save search data to localStorage whenever it changes
     if (searchRequested.length > 0) {
-      window.localStorage.setItem("searchData", JSON.stringify(searchRequested));
+      window.localStorage.setItem("searchRequested", JSON.stringify(searchRequested));
       // Call the function to fetch search results
       fetchSearchResults();
     }
