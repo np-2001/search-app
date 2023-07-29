@@ -1,24 +1,18 @@
+
 import './App.css';
-
-
-import {PropTypes} from "prop-types";
+import { useState, useEffect } from "react";
 import Navbar from './Navbar';
 import Search from './Search';
-import { useState, useEffect } from "react";
-import GoogleAutocomplete from "react-google-autocomplete";
 
 function App() {
-  const [Search_Requested,setSearch_Requested] = useState("");
   return (
     <div className="App">
-     <Navbar />
-     <Description/>
-     <Searches searchRequested={Search_Requested} setSearchRequested={setSearch_Requested}/>
+      <Navbar />
+      <Description />
+      <Searches />
     </div>
   );
 }
-
-
 
 function Description() {
   return (
@@ -28,36 +22,17 @@ function Description() {
   );
 }
 
+export default App;
 
-function Searches({ searchRequested, setSearchRequested }) {
-  const [Searching, setSearching] = useState("");
-  const [url, setUrl] = useState("");
-  const [url1, setUrl1] = useState("");
-  useEffect(() => {
-    // Initialize searchRequested with the value from localStorage
-    const storedData = window.localStorage.getItem('searchRequested');
-    if (storedData != null) {
-      setSearchRequested(JSON.parse(storedData));
-    }
-  }, [setSearchRequested]);
-
-  const SearchingChange = (event) => {
-    setSearching(event.target.value);
-  };
-
-  const EnterSearch = (event) => {
-    if (event.key === 'Enter') {
-      // Get input value from Searching state and update searchRequested state
-      setSearchRequested(Searching);
-    }
-  };
+// Searches.js
+function Searches() {
+  const [searchRequested, setSearchRequested] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
-    // Save search data to localStorage whenever it changes
-    if (url1.length > 0) {
-      setUrl(url1);
-    }
-  }, [url1]);
+    // Clear the searchRequested state when the Searches component mounts
+    setSearchRequested("");
+  }, []);
 
   useEffect(() => {
     // Save search data to localStorage whenever it changes
@@ -65,15 +40,16 @@ function Searches({ searchRequested, setSearchRequested }) {
       window.localStorage.setItem('searchRequested', JSON.stringify(searchRequested));
       const storedWebsitesData = JSON.parse(window.localStorage.getItem('searchData'));
       const searchDataArray = Array.isArray(storedWebsitesData) ? storedWebsitesData : [];
-      const apikey = 'AIzaSyCoCox1qCJabHvB9ALzBPwKEmS_bmCFnOo';
+      // Replace the apikey and SearchEngine_ID with your actual values
+      const apikey = "AIzaSyCoCox1qCJabHvB9ALzBPwKEmS_bmCFnOo";
       const SearchEngine_ID = 'd1d2ac321324e40ab';
-      const sitesToSearch = searchDataArray.join(',') || '';
+      const sitesToSearch = searchDataArray || [];
       const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${apikey}&cx=${SearchEngine_ID}&q=${searchRequested}&sitesearch=${sitesToSearch}`;
       fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
           // Update the state with the search results
-          setUrl(data.items);
+          setSearchResults(data.items);
         })
         .catch((error) => {
           console.error('Error fetching search results:', error);
@@ -81,21 +57,32 @@ function Searches({ searchRequested, setSearchRequested }) {
     }
   }, [searchRequested]);
 
+  const handleSearchingChange = (event) => {
+    setSearchRequested(event.target.value);
+  };
+
+  const handleEnterSearch = (event) => {
+    if (event.key === 'Enter') {
+      // Get input value from searchRequested state and update it
+      setSearchRequested(event.target.value);
+    }
+  };
+
   return (
     <div>
-      <form>
+      <form onSubmit={(e) => e.preventDefault()}>
         <label htmlFor='search_request'></label>
-        <input 
-          type="text" 
-          id='search_request' 
-          onChange={SearchingChange}
-          onKeyDown={EnterSearch}
+        <input
+          type="text"
+          id='search_request'
+          onChange={handleSearchingChange}
+          onKeyDown={handleEnterSearch}
         />
-      </form> 
+      </form>
       <div>
         {/* Render search results */}
-        {Array.isArray(url) &&
-          url.map((result, index) => (
+        {Array.isArray(searchResults) &&
+          searchResults.map((result, index) => (
             <div key={index}>
               <h2>{result.title}</h2>
               <a href={result.link} target="_blank" rel="noopener noreferrer">
@@ -108,4 +95,3 @@ function Searches({ searchRequested, setSearchRequested }) {
   );
 }
 
-export default App;
