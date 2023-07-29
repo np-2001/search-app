@@ -28,6 +28,7 @@ export default App;
 function Searches() {
   const [searchRequested, setSearchRequested] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState("");
 
   useEffect(() => {
     // Clear the searchRequested state when the Searches component mounts
@@ -37,32 +38,50 @@ function Searches() {
   useEffect(() => {
     // Save search data to localStorage whenever it changes
     if (searchRequested.length > 0) {
-      window.localStorage.setItem('searchRequested', JSON.stringify(searchRequested));
-      const storedWebsitesData = JSON.parse(window.localStorage.getItem('searchData'));
-      const searchDataArray = Array.isArray(storedWebsitesData) ? storedWebsitesData : [];
-      // Replace the apikey and SearchEngine_ID with your actual values
-      const apikey = "AIzaSyCoCox1qCJabHvB9ALzBPwKEmS_bmCFnOo";
-      const SearchEngine_ID = 'd1d2ac321324e40ab';
-      const sitesToSearch = searchDataArray || [];
-      const apiUrl = `https://www.googleapis.com/customsearch/v1?key=${apikey}&cx=${SearchEngine_ID}&q=${searchRequested}&sitesearch=${sitesToSearch}`;
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          // Update the state with the search results
-          setSearchResults(data.items);
-        })
-        .catch((error) => {
-          console.error('Error fetching search results:', error);
-        });
+      window.localStorage.setItem("searchData", JSON.stringify(searchRequested));
+      // Call the function to fetch search results
+      fetchSearchResults();
     }
   }, [searchRequested]);
 
+  const fetchSearchResults = async () => {
+    const websiteList = ["reddit.com", "youtube.com"];
+    const websiteQuery = websiteList.map((website) => `site:${website}`).join("|");
+    const apiKey = "cbf04eda8f0340f0b0f28fd09e433f3a";
+    const searchEndpoint = "https://api.bing.microsoft.com/v7.0/search";
+    
+    try {
+      const storedWebsitesData = JSON.parse(window.localStorage.getItem('searchData'));
+      const sitesToSearch = Array.isArray(storedWebsitesData) ? storedWebsitesData : [];
+      const query = `${searchRequested} ${sitesToSearch.map((website) => `site:${website}`).join(" ")}`;
+
+      const response = await fetch(
+        `${searchEndpoint}?q=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            "Ocp-Apim-Subscription-Key": apiKey,
+          },
+          
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setSearchResults(data.webPages.value);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  };
+
   const handleSearchingChange = (event) => {
-    setSearchRequested(event.target.value);
+    setSearching(event.target.value);
   };
 
   const handleEnterSearch = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       // Get input value from searchRequested state and update it
       setSearchRequested(event.target.value);
     }
@@ -71,10 +90,10 @@ function Searches() {
   return (
     <div>
       <form onSubmit={(e) => e.preventDefault()}>
-        <label htmlFor='search_request'></label>
+        <label htmlFor="search_request"></label>
         <input
           type="text"
-          id='search_request'
+          id="search_request"
           onChange={handleSearchingChange}
           onKeyDown={handleEnterSearch}
         />
@@ -84,9 +103,9 @@ function Searches() {
         {Array.isArray(searchResults) &&
           searchResults.map((result, index) => (
             <div key={index}>
-              <h2>{result.title}</h2>
-              <a href={result.link} target="_blank" rel="noopener noreferrer">
-                {result.formattedUrl}
+              <h2>{result.name}</h2>
+              <a href={result.url} target="_blank" rel="noopener noreferrer">
+                {result.url}
               </a>
             </div>
           ))}
