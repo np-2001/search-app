@@ -46,7 +46,7 @@ function Searches() {
 
   const fetchSearchResults = async () => {
     
-    const apiKey = "cbf04eda8f0340f0b0f28fd09e433f3a";
+    const apiKey = "";
     const searchEndpoint = "https://api.bing.microsoft.com/v7.0/search";
     
     try {
