@@ -24,7 +24,6 @@ function Description() {
 
 export default App;
 
-// Searches.js
 function Searches() {
   const [searchRequested, setSearchRequested] = useState("");
   const [searchResults, setSearchResults] = useState([]);
